@@ -504,7 +504,16 @@
           <input type="number" id="tin" class="input-no-prefix" placeholder="3.5" min="0" max="20" step="0.1" style="padding-left:0.75rem; padding-right:2.2rem;">
           <span class="input-suffix">%</span>
         </div>
-        <div class="hint">Pídelo a tu banco. En 2024 ronda el 3–4%.</div>
+        <div class="hint">Mayo 2026 — Fija: desde 2,75% · Variable: euríbor (2,75%) + diferencial · Mixta: desde 1,75%</div>
+      </div>
+
+      <div class="field">
+        <label>Valor de tasación <span style="font-weight:300; text-transform:none; font-size:0.75rem;">(opcional)</span></label>
+        <div class="input-wrap">
+          <span class="input-prefix">€</span>
+          <input type="number" id="tasacion" placeholder="Déjalo vacío si coincide con el precio" min="0" step="1000">
+        </div>
+        <div class="hint">El banco presta sobre el menor de los dos valores: precio de venta o tasación.</div>
       </div>
 
       <div class="field">
@@ -613,8 +622,13 @@ function calcular() {
   }
 
   const porcentajeEntrada = (100 - porcentajeBanco) / 100;
-  const entrada = precio * porcentajeEntrada;
-  const prestamo = precio * (porcentajeBanco / 100);
+
+  const tasacionVal = parseFloat(document.getElementById('tasacion').value);
+  const baseCalculo = (!isNaN(tasacionVal) && tasacionVal > 0) ? Math.min(precio, tasacionVal) : precio;
+  const diferenciaTasacion = baseCalculo < precio ? precio - baseCalculo : 0;
+
+  const prestamo = baseCalculo * (porcentajeBanco / 100);
+  const entrada = precio - prestamo;
 
   const inmobiliaria = precio * 0.03 * 1.21;
 
@@ -648,6 +662,10 @@ function calcular() {
 
   const alertasEl = document.getElementById('alertas');
   alertasEl.innerHTML = '';
+
+  if (diferenciaTasacion > 0) {
+    alertasEl.innerHTML += `<div class="alert alert-warn"><strong>⚠ Tasación inferior al precio de venta.</strong> El banco solo presta sobre los ${fmt(baseCalculo)} de tasación. La diferencia de ${fmt(diferenciaTasacion)} la tienes que cubrir tú de tu bolsillo, sumada a la entrada habitual.</div>`;
+  }
 
   if (ahorrosRestantes < 0) {
     alertasEl.innerHTML += `<div class="alert alert-danger"><strong>⚠ Ahorros insuficientes.</strong> Te faltan ${fmt(Math.abs(ahorrosRestantes))} para cubrir la entrada y los gastos. Necesitas al menos ${fmt(totalNecesario)} en ahorros.</div>`;
@@ -687,8 +705,9 @@ function calcular() {
   const breakdown = document.getElementById('breakdown');
   breakdown.innerHTML = `
     <div class="breakdown-row"><span>Precio del piso</span><span>${fmt(precio)}</span></div>
-    <div class="breakdown-row"><span>— Préstamo del banco (${porcentajeBanco}%)</span><span>− ${fmt(prestamo)}</span></div>
-    <div class="breakdown-row"><span>= Entrada que pones tú (${(porcentajeEntrada*100).toFixed(0)}%)</span><span>${fmt(entrada)}</span></div>
+    ${diferenciaTasacion > 0 ? `<div class="breakdown-row warn"><span>Valor de tasación</span><span style="color:var(--warn)">${fmt(baseCalculo)}</span></div>` : ''}
+    <div class="breakdown-row"><span>— Préstamo del banco (${porcentajeBanco}% sobre ${diferenciaTasacion > 0 ? 'tasación' : 'precio'})</span><span>− ${fmt(prestamo)}</span></div>
+    <div class="breakdown-row"><span>= Entrada que pones tú</span><span>${fmt(entrada)}</span></div>
     <div class="breakdown-row"><span>Honorarios inmobiliaria (3% + IVA)</span><span>${fmt(inmobiliaria)}</span></div>
     <div class="breakdown-row"><span>${impLabel}</span><span>${fmt(impuestos)}</span></div>
     <div class="breakdown-row"><span>Notaría + registro + gestoría (estimado)</span><span>${fmt(gestionFija)}</span></div>
