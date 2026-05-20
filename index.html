@@ -513,7 +513,7 @@
           <span class="input-prefix">€</span>
           <input type="number" id="tasacion" placeholder="Déjalo vacío si coincide con el precio" min="0" step="1000">
         </div>
-        <div class="hint">El banco presta sobre el menor de los dos valores: precio de venta o tasación.</div>
+        <div class="hint">El banco presta sobre el valor de tasación, no sobre el precio de venta. Cuanto mayor sea la tasación, menos entrada tendrás que poner.</div>
       </div>
 
       <div class="field">
@@ -624,8 +624,9 @@ function calcular() {
   const porcentajeEntrada = (100 - porcentajeBanco) / 100;
 
   const tasacionVal = parseFloat(document.getElementById('tasacion').value);
-  const baseCalculo = (!isNaN(tasacionVal) && tasacionVal > 0) ? Math.min(precio, tasacionVal) : precio;
-  const diferenciaTasacion = baseCalculo < precio ? precio - baseCalculo : 0;
+  const hayTasacion = (!isNaN(tasacionVal) && tasacionVal > 0);
+  const baseCalculo = hayTasacion ? tasacionVal : precio;
+  const diferenciaTasacion = hayTasacion ? precio - tasacionVal : 0;
 
   const prestamo = baseCalculo * (porcentajeBanco / 100);
   const entrada = precio - prestamo;
@@ -663,8 +664,12 @@ function calcular() {
   const alertasEl = document.getElementById('alertas');
   alertasEl.innerHTML = '';
 
-  if (diferenciaTasacion > 0) {
-    alertasEl.innerHTML += `<div class="alert alert-warn"><strong>⚠ Tasación inferior al precio de venta.</strong> El banco solo presta sobre los ${fmt(baseCalculo)} de tasación. La diferencia de ${fmt(diferenciaTasacion)} la tienes que cubrir tú de tu bolsillo, sumada a la entrada habitual.</div>`;
+  if (hayTasacion) {
+    if (tasacionVal > precio) {
+      alertasEl.innerHTML += `<div class="alert alert-ok"><strong>✓ Tasación por encima del precio de venta.</strong> El banco presta sobre los ${fmt(tasacionVal)} de tasación, así que tu entrada se reduce. Recuerda que algunos bancos limitan el préstamo al 80% del precio de venta aunque la tasación sea mayor — confirma este punto con tu entidad.</div>`;
+    } else if (tasacionVal < precio) {
+      alertasEl.innerHTML += `<div class="alert alert-warn"><strong>⚠ Tasación inferior al precio de venta.</strong> El banco presta sobre los ${fmt(tasacionVal)} de tasación. La diferencia de ${fmt(Math.abs(diferenciaTasacion))} la tienes que cubrir tú de tu bolsillo, sumada a la entrada habitual.</div>`;
+    }
   }
 
   if (ahorrosRestantes < 0) {
