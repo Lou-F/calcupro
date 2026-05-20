@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CalcuPro — Calculadora de Hipoteca</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #F5F2EB;
+    --surface: #FDFBF7;
+    --border: #DDD8CC;
+    --text: #1A1814;
+    --muted: #6B6660;
+    --accent: #1D4E3A;
+    --accent-light: #E8F2ED;
+    --accent-mid: #2D7A5C;
+    --danger: #A32D2D;
+    --danger-light: #FCEBEB;
+    --warn: #854F0B;
+    --warn-light: #FAEEDA;
+    --radius: 12px;
+    --radius-sm: 8px;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 400;
+    min-height: 100vh;
+    padding: 0;
+  }
+
+  header {
+    background: var(--accent);
+    padding: 2rem 2rem 1.5rem;
+    text-align: center;
+  }
+
+  header h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(2rem, 5vw, 3rem);
+    color: #E8F2ED;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+  }
+
+  header h1 em {
+    font-style: italic;
+    color: #9FE1CB;
+  }
+
+  header p {
+    color: #9FE1CB;
+    font-size: 0.95rem;
+    margin-top: 0.4rem;
+    font-weight: 300;
+  }
+
+  .container {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 2rem 1.25rem 4rem;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+
+  @media (max-width: 600px) {
+    .grid { grid-template-columns: 1fr; }
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+  }
+
+  .card-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.15rem;
+    color: var(--accent);
+    margin-bottom: 1.25rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .field {
+    margin-bottom: 1rem;
+  }
+
+  .field:last-child { margin-bottom: 0; }
+
+  label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 0.35rem;
+  }
+
+  .input-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .input-prefix {
+    position: absolute;
+    left: 0.75rem;
+    font-size: 0.9rem;
+    color: var(--muted);
+    pointer-events: none;
+    font-weight: 500;
+  }
+
+  .input-suffix {
+    position: absolute;
+    right: 0.75rem;
+    font-size: 0.9rem;
+    color: var(--muted);
+    pointer-events: none;
+    font-weight: 500;
+  }
+
+  input[type="number"] {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 0.6rem 2.2rem 0.6rem 1.75rem;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.95rem;
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.15s;
+    -moz-appearance: textfield;
+  }
+
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; }
+
+  input[type="number"]:focus {
+    border-color: var(--accent-mid);
+    box-shadow: 0 0 0 3px rgba(29, 122, 92, 0.12);
+  }
+
+  .input-no-prefix {
+    padding-left: 0.75rem;
+  }
+
+  .hint {
+    font-size: 0.75rem;
+    color: var(--muted);
+    margin-top: 0.3rem;
+  }
+
+  .radio-group {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .radio-option {
+    flex: 1;
+    min-width: 120px;
+  }
+
+  .radio-option input[type="radio"] {
+    display: none;
+  }
+
+  .radio-option label {
+    display: block;
+    text-align: center;
+    padding: 0.5rem 0.75rem;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-size: 0.82rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    transition: all 0.15s;
+    color: var(--muted);
+  }
+
+  .radio-option input[type="radio"]:checked + label {
+    background: var(--accent-light);
+    border-color: var(--accent-mid);
+    color: var(--accent);
+    font-weight: 500;
+  }
+
+  .btn-calc {
+    width: 100%;
+    background: var(--accent);
+    color: #E8F2ED;
+    border: none;
+    border-radius: var(--radius);
+    padding: 0.9rem 1.5rem;
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.1rem;
+    letter-spacing: 0.02em;
+    cursor: pointer;
+    margin-top: 1.25rem;
+    transition: background 0.15s, transform 0.1s;
+  }
+
+  .btn-calc:hover { background: var(--accent-mid); }
+  .btn-calc:active { transform: scale(0.99); }
+
+  .results-section {
+    margin-top: 1.5rem;
+    display: none;
+  }
+
+  .results-section.visible { display: block; }
+
+  .results-header {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.4rem;
+    color: var(--accent);
+    margin-bottom: 1rem;
+    padding-left: 0.25rem;
+  }
+
+  .result-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+  }
+
+  .result-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1rem 1.1rem;
+  }
+
+  .result-card.highlight {
+    background: var(--accent-light);
+    border-color: var(--accent-mid);
+  }
+
+  .result-card.warn {
+    background: var(--warn-light);
+    border-color: #EF9F27;
+  }
+
+  .result-card.danger {
+    background: var(--danger-light);
+    border-color: #F09595;
+  }
+
+  .result-label {
+    font-size: 0.72rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--muted);
+    margin-bottom: 0.4rem;
+    line-height: 1.3;
+  }
+
+  .result-value {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.45rem;
+    color: var(--text);
+    line-height: 1;
+  }
+
+  .result-card.highlight .result-value { color: var(--accent); }
+  .result-card.warn .result-value { color: var(--warn); }
+  .result-card.danger .result-value { color: var(--danger); }
+
+  .result-sub {
+    font-size: 0.75rem;
+    color: var(--muted);
+    margin-top: 0.3rem;
+  }
+
+  .alert {
+    border-radius: var(--radius-sm);
+    padding: 0.85rem 1rem;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    margin-bottom: 0.75rem;
+  }
+
+  .alert-warn {
+    background: var(--warn-light);
+    border: 1px solid #EF9F27;
+    color: var(--warn);
+  }
+
+  .alert-danger {
+    background: var(--danger-light);
+    border: 1px solid #F09595;
+    color: var(--danger);
+  }
+
+  .alert-ok {
+    background: var(--accent-light);
+    border: 1px solid var(--accent-mid);
+    color: var(--accent);
+  }
+
+  .alert strong { font-weight: 500; }
+
+  .divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 1.25rem 0;
+  }
+
+  .breakdown-title {
+    font-size: 0.78rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--muted);
+    margin-bottom: 0.75rem;
+  }
+
+  .breakdown-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 0.45rem 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.88rem;
+  }
+
+  .breakdown-row:last-child { border-bottom: none; }
+
+  .breakdown-row span:first-child { color: var(--muted); }
+  .breakdown-row span:last-child { font-weight: 500; color: var(--text); }
+
+  .breakdown-row.total {
+    padding-top: 0.6rem;
+    margin-top: 0.25rem;
+    border-top: 1px solid var(--border);
+    border-bottom: none;
+    font-weight: 500;
+  }
+
+  .breakdown-row.total span:first-child { color: var(--text); }
+
+  footer {
+    text-align: center;
+    padding: 1.5rem;
+    font-size: 0.78rem;
+    color: var(--muted);
+    border-top: 1px solid var(--border);
+  }
+
+  .badge {
+    display: inline-block;
+    background: var(--accent-light);
+    color: var(--accent);
+    font-size: 0.7rem;
+    font-weight: 500;
+    padding: 0.15rem 0.5rem;
+    border-radius: 100px;
+    letter-spacing: 0.04em;
+    vertical-align: middle;
+    margin-left: 0.4rem;
+  }
+
+  select {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 0.6rem 0.75rem;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.95rem;
+    color: var(--text);
+    outline: none;
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24'%3E%3Cpath fill='%236B6660' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    transition: border-color 0.15s;
+  }
+
+  select:focus {
+    border-color: var(--accent-mid);
+    box-shadow: 0 0 0 3px rgba(29, 122, 92, 0.12);
+  }
+
+  .itp-tag {
+    display: inline-block;
+    background: var(--accent-light);
+    color: var(--accent);
+    font-size: 0.75rem;
+    font-weight: 500;
+    padding: 0.1rem 0.5rem;
+    border-radius: 100px;
+    margin-left: 0.4rem;
+    vertical-align: middle;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Calcu<em>Pro</em></h1>
+  <p>¿Puedes comprarte ese piso? Descúbrelo antes de firmar nada.</p>
+</header>
+
+<div class="container">
+
+  <div class="grid" style="margin-bottom: 1rem;">
+
+    <div class="card">
+      <div class="card-title">El piso</div>
+
+      <div class="field">
+        <label>Precio de venta</label>
+        <div class="input-wrap">
+          <span class="input-prefix">€</span>
+          <input type="number" id="precio" placeholder="200000" min="0" step="1000">
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Comunidad autónoma</label>
+        <select id="comunidad" onchange="actualizarITP()">
+          <option value="madrid">Madrid</option>
+          <option value="andalucia">Andalucía</option>
+          <option value="aragon">Aragón</option>
+          <option value="asturias">Asturias</option>
+          <option value="baleares">Baleares</option>
+          <option value="canarias">Canarias</option>
+          <option value="cantabria">Cantabria</option>
+          <option value="castilla_la_mancha">Castilla-La Mancha</option>
+          <option value="castilla_leon">Castilla y León</option>
+          <option value="cataluna">Cataluña</option>
+          <option value="extremadura">Extremadura</option>
+          <option value="galicia">Galicia</option>
+          <option value="la_rioja">La Rioja</option>
+          <option value="murcia">Murcia</option>
+          <option value="navarra">Navarra</option>
+          <option value="pais_vasco">País Vasco</option>
+          <option value="valencia">Valencia</option>
+        </select>
+        <div class="hint" id="itp-hint">ITP segunda mano: <strong>6%</strong> — AJD obra nueva: <strong>0,75%</strong></div>
+      </div>
+
+      <div class="field">
+        <label>Tipo de vivienda</label>
+        <div class="radio-group">
+          <div class="radio-option">
+            <input type="radio" name="tipo" id="segunda" value="segunda" checked>
+            <label for="segunda">Segunda mano</label>
+          </div>
+          <div class="radio-option">
+            <input type="radio" name="tipo" id="nueva" value="nueva">
+            <label for="nueva">Obra nueva</label>
+          </div>
+        </div>
+        <div class="hint">Afecta a los impuestos (ITP vs IVA+AJD)</div>
+      </div>
+
+      <div class="field">
+        <label>% que financia el banco</label>
+        <div class="input-wrap">
+          <input type="number" id="porcentajeBanco" class="input-no-prefix" placeholder="80" min="0" max="100" step="1" style="padding-left:0.75rem; padding-right:2.2rem;">
+          <span class="input-suffix">%</span>
+        </div>
+        <div class="hint">Normalmente entre 70% y 80%. El resto es la entrada.</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Tu situación</div>
+
+      <div class="field">
+        <label>Ahorros disponibles</label>
+        <div class="input-wrap">
+          <span class="input-prefix">€</span>
+          <input type="number" id="ahorros" placeholder="60000" min="0" step="1000">
+        </div>
+        <div class="hint">El total que tienes para la operación</div>
+      </div>
+
+      <div class="field">
+        <label>TIN — Interés anual del préstamo</label>
+        <div class="input-wrap">
+          <input type="number" id="tin" class="input-no-prefix" placeholder="3.5" min="0" max="20" step="0.1" style="padding-left:0.75rem; padding-right:2.2rem;">
+          <span class="input-suffix">%</span>
+        </div>
+        <div class="hint">Pídelo a tu banco. En 2024 ronda el 3–4%.</div>
+      </div>
+
+      <div class="field">
+        <label>Plazo del préstamo</label>
+        <div class="input-wrap">
+          <input type="number" id="plazo" class="input-no-prefix" placeholder="30" min="5" max="40" step="1" style="padding-left:0.75rem; padding-right:3rem;">
+          <span class="input-suffix">años</span>
+        </div>
+        <div class="hint">Lo habitual es 20–30 años</div>
+      </div>
+    </div>
+
+  </div>
+
+  <button class="btn-calc" onclick="calcular()">Calcular mi hipoteca →</button>
+
+  <div class="results-section" id="results">
+
+    <hr class="divider">
+    <div class="results-header">Resultado</div>
+
+    <div id="alertas"></div>
+
+    <div class="result-cards" id="result-cards"></div>
+
+    <div class="card" style="margin-top: 0.75rem;">
+      <div class="breakdown-title">Desglose completo del dinero necesario</div>
+      <div id="breakdown"></div>
+    </div>
+
+    <div class="card" style="margin-top: 0.75rem; background: var(--accent-light); border-color: var(--accent-mid);">
+      <div class="breakdown-title" style="color: var(--accent);">¿Qué es cada cosa?</div>
+      <div style="font-size: 0.82rem; color: var(--accent); line-height: 1.7;">
+        <p><strong>Entrada</strong> — La parte del precio que pagas tú directamente, sin préstamo.</p>
+        <p style="margin-top:0.5rem;"><strong>Inmobiliaria (3% + IVA)</strong> — Honorarios del agente. Se pagan al firmar. A veces la paga el vendedor; confirma quién asume este coste.</p>
+        <p style="margin-top:0.5rem;"><strong>Gastos de gestión</strong> — Notaría, registro de la propiedad y gestoría. Estimación orientativa.</p>
+        <p style="margin-top:0.5rem;"><strong>Impuestos</strong> — ITP (segunda mano, 6% en Madrid) o IVA+AJD (obra nueva, ~10,75% en Madrid).</p>
+        <p style="margin-top:0.5rem;"><strong>Cuota mensual (fórmula francesa)</strong> — Lo que pagarás al banco cada mes. Calculado con TIN ÷ 12 como tipo mensual, que es la fórmula estándar de amortización.</p>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<footer>
+  CalcuPro — Calculadora orientativa. No constituye asesoramiento financiero. Consulta siempre con un profesional antes de firmar.
+</footer>
+
+<script>
+const CCAA = {
+  madrid:           { itp: 0.06,  ajd: 0.0075, label: 'Madrid' },
+  andalucia:        { itp: 0.07,  ajd: 0.012,  label: 'Andalucía' },
+  aragon:           { itp: 0.08,  ajd: 0.015,  label: 'Aragón' },
+  asturias:         { itp: 0.08,  ajd: 0.012,  label: 'Asturias' },
+  baleares:         { itp: 0.08,  ajd: 0.012,  label: 'Baleares', itpNota: 'escala hasta 11% según precio' },
+  canarias:         { itp: 0.065, ajd: 0.0075, label: 'Canarias' },
+  cantabria:        { itp: 0.10,  ajd: 0.015,  label: 'Cantabria' },
+  castilla_la_mancha: { itp: 0.09, ajd: 0.015, label: 'Castilla-La Mancha' },
+  castilla_leon:    { itp: 0.08,  ajd: 0.015,  label: 'Castilla y León' },
+  cataluna:         { itp: 0.10,  ajd: 0.015,  label: 'Cataluña' },
+  extremadura:      { itp: 0.08,  ajd: 0.015,  label: 'Extremadura' },
+  galicia:          { itp: 0.10,  ajd: 0.015,  label: 'Galicia' },
+  la_rioja:         { itp: 0.07,  ajd: 0.01,   label: 'La Rioja' },
+  murcia:           { itp: 0.08,  ajd: 0.015,  label: 'Murcia' },
+  navarra:          { itp: 0.06,  ajd: 0.005,  label: 'Navarra' },
+  pais_vasco:       { itp: 0.04,  ajd: 0.0,    label: 'País Vasco', itpNota: 'varía por territorio histórico' },
+  valencia:         { itp: 0.10,  ajd: 0.015,  label: 'Valencia' },
+};
+
+function actualizarITP() {
+  const key = document.getElementById('comunidad').value;
+  const cc = CCAA[key];
+  const itpPct = (cc.itp * 100).toFixed(1).replace('.0','');
+  const ajdPct = (cc.ajd * 100).toFixed(2).replace('.00','').replace(/\.?0+$/,'');
+  const nota = cc.itpNota ? ` <span style="color:var(--warn);font-size:0.72rem;">(${cc.itpNota})</span>` : '';
+  document.getElementById('itp-hint').innerHTML =
+    `ITP segunda mano: <strong>${itpPct}%</strong>${nota} — AJD obra nueva: <strong>${ajdPct}%</strong>`;
+}
+
+function fmt(n) {
+  return new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(Math.round(n));
+}
+
+function fmtDec(n) {
+  return new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'EUR', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(n);
+}
+
+function calcular() {
+  const precio = parseFloat(document.getElementById('precio').value);
+  const porcentajeBanco = parseFloat(document.getElementById('porcentajeBanco').value);
+  const ahorros = parseFloat(document.getElementById('ahorros').value);
+  const tin = parseFloat(document.getElementById('tin').value);
+  const plazo = parseFloat(document.getElementById('plazo').value);
+  const tipo = document.querySelector('input[name="tipo"]:checked').value;
+  const ccKey = document.getElementById('comunidad').value;
+  const cc = CCAA[ccKey];
+
+  if ([precio, porcentajeBanco, ahorros, tin, plazo].some(v => isNaN(v) || v < 0)) {
+    alert('Por favor, rellena todos los campos con valores válidos.');
+    return;
+  }
+
+  const porcentajeEntrada = (100 - porcentajeBanco) / 100;
+  const entrada = precio * porcentajeEntrada;
+  const prestamo = precio * (porcentajeBanco / 100);
+
+  const inmobiliaria = precio * 0.03 * 1.21;
+
+  const impuestos = tipo === 'segunda'
+    ? precio * cc.itp
+    : precio * 0.10 + precio * cc.ajd;
+
+  const impLabel = tipo === 'segunda'
+    ? `ITP ${(cc.itp*100).toFixed(1).replace('.0','')}% · segunda mano · ${cc.label}`
+    : `IVA 10% + AJD ${(cc.ajd*100).toFixed(2).replace(/\.?0+$/,'')}% · obra nueva · ${cc.label}`;
+
+  const gestionFija = precio < 150000 ? 1000 : precio < 300000 ? 1300 : 1500;
+
+  const totalNecesario = entrada + inmobiliaria + impuestos + gestionFija;
+  const ahorrosRestantes = ahorros - totalNecesario;
+
+  const r = (tin / 100) / 12;
+  const n = plazo * 12;
+  let cuota;
+  if (r === 0) {
+    cuota = prestamo / n;
+  } else {
+    cuota = prestamo * (r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1);
+  }
+
+  const totalPagadoBanco = cuota * n;
+  const totalIntereses = totalPagadoBanco - prestamo;
+
+  const results = document.getElementById('results');
+  results.classList.add('visible');
+
+  const alertasEl = document.getElementById('alertas');
+  alertasEl.innerHTML = '';
+
+  if (ahorrosRestantes < 0) {
+    alertasEl.innerHTML += `<div class="alert alert-danger"><strong>⚠ Ahorros insuficientes.</strong> Te faltan ${fmt(Math.abs(ahorrosRestantes))} para cubrir la entrada y los gastos. Necesitas al menos ${fmt(totalNecesario)} en ahorros.</div>`;
+  } else if (ahorrosRestantes < 5000) {
+    alertasEl.innerHTML += `<div class="alert alert-warn"><strong>Margen muy justo.</strong> Solo te quedarían ${fmt(ahorrosRestantes)} tras la compra. Tener un colchón de emergencia es importante.</div>`;
+  } else {
+    alertasEl.innerHTML += `<div class="alert alert-ok"><strong>Ahorros suficientes.</strong> Cubrirías todos los gastos iniciales y te quedarían ${fmt(ahorrosRestantes)} de reserva.</div>`;
+  }
+
+  const cuotaIngresos = cuota / (cuota * 3);
+  const cuotaWarning = cuota > 1500;
+
+  const cards = document.getElementById('result-cards');
+  cards.innerHTML = `
+    <div class="result-card highlight">
+      <div class="result-label">Cuota mensual</div>
+      <div class="result-value">${fmtDec(cuota)}</div>
+      <div class="result-sub">Durante ${plazo} años</div>
+    </div>
+    <div class="result-card">
+      <div class="result-label">Dinero necesario hoy</div>
+      <div class="result-value">${fmt(totalNecesario)}</div>
+      <div class="result-sub">Entrada + gastos e impuestos</div>
+    </div>
+    <div class="result-card ${ahorrosRestantes < 0 ? 'danger' : ahorrosRestantes < 5000 ? 'warn' : ''}">
+      <div class="result-label">Ahorros que te quedan</div>
+      <div class="result-value">${fmt(ahorrosRestantes)}</div>
+      <div class="result-sub">Después de la compra</div>
+    </div>
+    <div class="result-card warn">
+      <div class="result-label">Total intereses pagados</div>
+      <div class="result-value">${fmt(totalIntereses)}</div>
+      <div class="result-sub">En ${plazo} años al ${tin}% TIN</div>
+    </div>
+  `;
+
+  const breakdown = document.getElementById('breakdown');
+  breakdown.innerHTML = `
+    <div class="breakdown-row"><span>Precio del piso</span><span>${fmt(precio)}</span></div>
+    <div class="breakdown-row"><span>— Préstamo del banco (${porcentajeBanco}%)</span><span>− ${fmt(prestamo)}</span></div>
+    <div class="breakdown-row"><span>= Entrada que pones tú (${(porcentajeEntrada*100).toFixed(0)}%)</span><span>${fmt(entrada)}</span></div>
+    <div class="breakdown-row"><span>Honorarios inmobiliaria (3% + IVA)</span><span>${fmt(inmobiliaria)}</span></div>
+    <div class="breakdown-row"><span>${impLabel}</span><span>${fmt(impuestos)}</span></div>
+    <div class="breakdown-row"><span>Notaría + registro + gestoría (estimado)</span><span>${fmt(gestionFija)}</span></div>
+    <div class="breakdown-row total"><span>Total que necesitas tener hoy</span><span>${fmt(totalNecesario)}</span></div>
+    <div class="breakdown-row" style="margin-top:0.5rem;"><span>Tus ahorros</span><span>${fmt(ahorros)}</span></div>
+    <div class="breakdown-row ${ahorrosRestantes < 0 ? 'danger' : ''}" style="font-weight:500;"><span>Ahorros que te quedan tras la compra</span><span style="color:${ahorrosRestantes < 0 ? 'var(--danger)' : 'inherit'}">${fmt(ahorrosRestantes)}</span></div>
+    <hr class="divider" style="margin: 0.5rem 0;">
+    <div class="breakdown-row"><span>Préstamo (capital)</span><span>${fmt(prestamo)}</span></div>
+    <div class="breakdown-row"><span>TIN aplicado</span><span>${tin}%</span></div>
+    <div class="breakdown-row"><span>Tipo mensual (TIN ÷ 12)</span><span>${(tin/12).toFixed(4)}%</span></div>
+    <div class="breakdown-row"><span>Cuota mensual</span><span>${fmtDec(cuota)}</span></div>
+    <div class="breakdown-row"><span>Número de cuotas</span><span>${n}</span></div>
+    <div class="breakdown-row"><span>Total pagado al banco</span><span>${fmt(totalPagadoBanco)}</span></div>
+    <div class="breakdown-row warn"><span>De los que son intereses</span><span style="color:var(--warn)">${fmt(totalIntereses)}</span></div>
+  `;
+
+  results.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') calcular();
+});
+</script>
+</body>
+</html>
