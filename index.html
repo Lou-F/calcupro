@@ -459,6 +459,7 @@
           <option value="valencia">Valencia</option>
         </select>
         <div class="hint" id="itp-hint">ITP segunda mano: <strong>6%</strong> — AJD obra nueva: <strong>0,75%</strong></div>
+        <div id="deduccion-hint" style="display:none; font-size:0.75rem; color:var(--accent); background:var(--accent-light); border:1px solid var(--accent-mid); border-radius:var(--radius-sm); padding:0.5rem 0.65rem; margin-top:0.4rem; line-height:1.5;"></div>
       </div>
 
       <div class="field">
@@ -484,10 +485,67 @@
         </div>
         <div class="hint">Normalmente entre 70% y 80%. El resto es la entrada.</div>
       </div>
+
+      <div class="field">
+        <label>Inmobiliaria</label>
+        <div class="radio-group">
+          <div class="radio-option">
+            <input type="radio" name="inmobiliaria" id="conInmo" value="con" checked onchange="toggleInmo()">
+            <label for="conInmo">Con inmobiliaria</label>
+          </div>
+          <div class="radio-option">
+            <input type="radio" name="inmobiliaria" id="sinInmo" value="sin" onchange="toggleInmo()">
+            <label for="sinInmo">Sin inmobiliaria</label>
+          </div>
+        </div>
+        <div class="hint">Con inmobiliaria: 3% + IVA sobre el precio de venta</div>
+      </div>
+
+      <div class="field" id="campo-inmo-pct">
+        <label>Porcentaje inmobiliaria</label>
+        <div class="input-wrap">
+          <input type="number" id="pctInmobiliaria" class="input-no-prefix" value="3" min="0" max="10" step="0.1" style="padding-left:0.75rem; padding-right:2.2rem;">
+          <span class="input-suffix">%</span>
+        </div>
+        <div class="hint">Sin IVA. Se añade el 21% automáticamente.</div>
+      </div>
     </div>
 
     <div class="card">
       <div class="card-title">Tu situación</div>
+
+      <div class="field">
+        <label>Número de titulares</label>
+        <div class="radio-group">
+          <div class="radio-option">
+            <input type="radio" name="titulares" id="unTitular" value="1" checked onchange="toggleTitulares()">
+            <label for="unTitular">Un titular</label>
+          </div>
+          <div class="radio-option">
+            <input type="radio" name="titulares" id="dosTitulares" value="2" onchange="toggleTitulares()">
+            <label for="dosTitulares">Dos titulares</label>
+          </div>
+        </div>
+        <div class="hint">Con dos titulares el banco suma los ingresos de ambos, lo que suele mejorar las condiciones.</div>
+      </div>
+
+      <div class="field">
+        <label>Ingresos netos mensuales <span id="label-titular-1">(titular 1)</span></label>
+        <div class="input-wrap">
+          <span class="input-prefix">€</span>
+          <input type="number" id="ingresos" placeholder="3000" min="0" step="100">
+        </div>
+      </div>
+
+      <div class="field" id="campo-ingresos-2" style="display:none;">
+        <label>Ingresos netos mensuales (titular 2)</label>
+        <div class="input-wrap">
+          <span class="input-prefix">€</span>
+          <input type="number" id="ingresos2" placeholder="2000" min="0" step="100">
+        </div>
+      </div>
+
+      <div class="hint" style="margin-top:-0.5rem; margin-bottom:1rem;">Lo que recibes en cuenta cada mes, después de impuestos. Se recomienda que la cuota no supere el 30–35% de los ingresos totales.</div>
 
       <div class="field">
         <label>Ahorros disponibles</label>
@@ -495,7 +553,47 @@
           <span class="input-prefix">€</span>
           <input type="number" id="ahorros" placeholder="60000" min="0" step="1000">
         </div>
-        <div class="hint">El total que tienes para la operación</div>
+        <div class="hint">El total que tienes para la operación, sin contar posible venta de activo</div>
+      </div>
+
+      <div class="field">
+        <label style="display:flex; align-items:center; gap:0.5rem; cursor:pointer; text-transform:none; font-size:0.85rem; font-weight:500; color:var(--text); letter-spacing:0;">
+          <input type="checkbox" id="checkActivo" onchange="toggleActivo()" style="width:16px; height:16px; accent-color:var(--accent-mid); cursor:pointer; flex-shrink:0;">
+          Vendo otro activo para esta compra
+        </label>
+      </div>
+
+      <div id="bloque-activo" style="display:none;">
+        <div class="field">
+          <label>Tipo de activo</label>
+          <select id="tipoActivo">
+            <option value="vivienda_habitual">Vivienda habitual</option>
+            <option value="otra_vivienda">Otra vivienda / inmueble</option>
+            <option value="otro">Acciones u otro activo</option>
+          </select>
+          <div class="hint">Si es vivienda habitual y reinviertes en otra, puede haber exención de IRPF.</div>
+        </div>
+
+        <div class="field">
+          <label>Precio de venta del activo</label>
+          <div class="input-wrap">
+            <span class="input-prefix">€</span>
+            <input type="number" id="ventaActivo" placeholder="150000" min="0" step="1000">
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Precio de adquisición <span style="font-weight:300; text-transform:none; font-size:0.75rem;">(lo que te costó o valor en sucesiones)</span></label>
+          <div class="input-wrap">
+            <span class="input-prefix">€</span>
+            <input type="number" id="compraActivo" placeholder="100000" min="0" step="1000">
+          </div>
+          <div class="hint">Si fue herencia, pon el valor declarado en el impuesto de sucesiones.</div>
+        </div>
+
+        <div style="background:var(--warn-light); border:1px solid #EF9F27; border-radius:var(--radius-sm); padding:0.65rem 0.85rem; margin-bottom:1rem;">
+          <p style="font-size:0.75rem; color:var(--warn); line-height:1.5;">⚠ Cálculo orientativo. La fiscalidad de la venta de activos es compleja y depende de tu situación personal. Consulta con un gestor o asesor fiscal antes de tomar decisiones.</p>
+        </div>
       </div>
 
       <div class="field">
@@ -569,24 +667,53 @@
 
 <script>
 const CCAA = {
-  madrid:           { itp: 0.06,  ajd: 0.0075, label: 'Madrid' },
-  andalucia:        { itp: 0.07,  ajd: 0.012,  label: 'Andalucía' },
-  aragon:           { itp: 0.08,  ajd: 0.015,  label: 'Aragón' },
-  asturias:         { itp: 0.08,  ajd: 0.012,  label: 'Asturias' },
-  baleares:         { itp: 0.08,  ajd: 0.012,  label: 'Baleares', itpNota: 'escala hasta 11% según precio' },
-  canarias:         { itp: 0.065, ajd: 0.0075, label: 'Canarias' },
-  cantabria:        { itp: 0.10,  ajd: 0.015,  label: 'Cantabria' },
-  castilla_la_mancha: { itp: 0.09, ajd: 0.015, label: 'Castilla-La Mancha' },
-  castilla_leon:    { itp: 0.08,  ajd: 0.015,  label: 'Castilla y León' },
-  cataluna:         { itp: 0.10,  ajd: 0.015,  label: 'Cataluña' },
-  extremadura:      { itp: 0.08,  ajd: 0.015,  label: 'Extremadura' },
-  galicia:          { itp: 0.10,  ajd: 0.015,  label: 'Galicia' },
-  la_rioja:         { itp: 0.07,  ajd: 0.01,   label: 'La Rioja' },
-  murcia:           { itp: 0.08,  ajd: 0.015,  label: 'Murcia' },
-  navarra:          { itp: 0.06,  ajd: 0.005,  label: 'Navarra' },
-  pais_vasco:       { itp: 0.04,  ajd: 0.0,    label: 'País Vasco', itpNota: 'varía por territorio histórico' },
-  valencia:         { itp: 0.10,  ajd: 0.015,  label: 'Valencia' },
+  madrid:           { itp: 0.06,  ajd: 0.0075, label: 'Madrid',             deduccion: 'jóvenes <35 años, hipoteca variable con subida de euríbor' },
+  andalucia:        { itp: 0.07,  ajd: 0.012,  label: 'Andalucía',          deduccion: 'jóvenes <35 años o VPO' },
+  aragon:           { itp: 0.08,  ajd: 0.015,  label: 'Aragón',             deduccion: 'jóvenes <36 años en municipios pequeños' },
+  asturias:         { itp: 0.08,  ajd: 0.012,  label: 'Asturias',           deduccion: 'jóvenes, discapacidad, familia numerosa, zonas en despoblación' },
+  baleares:         { itp: 0.08,  ajd: 0.012,  label: 'Baleares',           deduccion: null, itpNota: 'escala hasta 11% según precio' },
+  canarias:         { itp: 0.065, ajd: 0.0075, label: 'Canarias',           deduccion: null },
+  cantabria:        { itp: 0.10,  ajd: 0.015,  label: 'Cantabria',          deduccion: 'casos específicos, consulta la AEAT' },
+  castilla_la_mancha: { itp: 0.09, ajd: 0.015, label: 'Castilla-La Mancha', deduccion: null },
+  castilla_leon:    { itp: 0.08,  ajd: 0.015,  label: 'Castilla y León',    deduccion: 'rehabilitación, núcleos rurales, víctimas de terrorismo' },
+  cataluna:         { itp: 0.10,  ajd: 0.015,  label: 'Cataluña',           deduccion: 'jóvenes y víctimas de terrorismo' },
+  extremadura:      { itp: 0.08,  ajd: 0.015,  label: 'Extremadura',        deduccion: 'jóvenes, núcleos rurales, 25% de intereses' },
+  galicia:          { itp: 0.10,  ajd: 0.015,  label: 'Galicia',            deduccion: 'zonas rurales y rehabilitación' },
+  la_rioja:         { itp: 0.07,  ajd: 0.01,   label: 'La Rioja',           deduccion: 'rehabilitación en zonas rurales' },
+  murcia:           { itp: 0.08,  ajd: 0.015,  label: 'Murcia',             deduccion: null },
+  navarra:          { itp: 0.06,  ajd: 0.005,  label: 'Navarra',            deduccion: 'régimen foral propio, consulta Hacienda Navarra' },
+  pais_vasco:       { itp: 0.04,  ajd: 0.0,    label: 'País Vasco',         deduccion: 'régimen foral propio, consulta tu Hacienda Foral', itpNota: 'varía por territorio histórico' },
+  valencia:         { itp: 0.10,  ajd: 0.015,  label: 'Valencia',           deduccion: null },
 };
+
+function toggleTitulares() {
+  const dos = document.querySelector('input[name="titulares"]:checked').value === '2';
+  document.getElementById('campo-ingresos-2').style.display = dos ? 'block' : 'none';
+  document.getElementById('label-titular-1').style.display = dos ? 'inline' : 'none';
+}
+
+function toggleActivo() {
+  const activo = document.getElementById('checkActivo').checked;
+  document.getElementById('bloque-activo').style.display = activo ? 'block' : 'none';
+}
+
+function calcularIRPF(ganancia) {
+  if (ganancia <= 0) return 0;
+  let impuesto = 0;
+  const tramos = [[6000, 0.19], [44000, 0.21], [150000, 0.23], [Infinity, 0.28]];
+  let restante = ganancia;
+  for (const [limite, tipo] of tramos) {
+    const base = Math.min(restante, limite);
+    impuesto += base * tipo;
+    restante -= base;
+    if (restante <= 0) break;
+  }
+  return impuesto;
+}
+function toggleInmo() {
+  const con = document.querySelector('input[name="inmobiliaria"]:checked').value === 'con';
+  document.getElementById('campo-inmo-pct').style.display = con ? 'block' : 'none';
+}
 
 function actualizarITP() {
   const key = document.getElementById('comunidad').value;
@@ -596,6 +723,13 @@ function actualizarITP() {
   const nota = cc.itpNota ? ` <span style="color:var(--warn);font-size:0.72rem;">(${cc.itpNota})</span>` : '';
   document.getElementById('itp-hint').innerHTML =
     `ITP segunda mano: <strong>${itpPct}%</strong>${nota} — AJD obra nueva: <strong>${ajdPct}%</strong>`;
+  const dedEl = document.getElementById('deduccion-hint');
+  if (cc.deduccion) {
+    dedEl.innerHTML = `ℹ Esta comunidad tiene deducciones autonómicas por compra de vivienda habitual (${cc.deduccion}). Consulta tu situación concreta en la <a href="https://sede.agenciatributaria.gob.es/Sede/vivienda-otros-inmuebles/irpf-deducciones-autonomicas.html" target="_blank" style="color:var(--accent-mid);">web de la AEAT</a>.`;
+    dedEl.style.display = 'block';
+  } else {
+    dedEl.style.display = 'none';
+  }
 }
 
 function fmt(n) {
@@ -612,6 +746,7 @@ function calcular() {
   const ahorros = parseFloat(document.getElementById('ahorros').value);
   const tin = parseFloat(document.getElementById('tin').value);
   const plazo = parseFloat(document.getElementById('plazo').value);
+  const ingresos = parseFloat(document.getElementById('ingresos').value) || 0;
   const tipo = document.querySelector('input[name="tipo"]:checked').value;
   const ccKey = document.getElementById('comunidad').value;
   const cc = CCAA[ccKey];
@@ -620,6 +755,15 @@ function calcular() {
     alert('Por favor, rellena todos los campos con valores válidos.');
     return;
   }
+
+  const hayActivo = document.getElementById('checkActivo').checked;
+  const ventaActivo = hayActivo ? (parseFloat(document.getElementById('ventaActivo').value) || 0) : 0;
+  const compraActivo = hayActivo ? (parseFloat(document.getElementById('compraActivo').value) || 0) : 0;
+  const tipoActivo = hayActivo ? document.getElementById('tipoActivo').value : null;
+  const gananciaActivo = Math.max(0, ventaActivo - compraActivo);
+  const irpfActivo = hayActivo && tipoActivo !== 'vivienda_habitual' ? calcularIRPF(gananciaActivo) : 0;
+  const netoActivo = ventaActivo - irpfActivo;
+  const ahorrosTotales = ahorros + (hayActivo ? netoActivo : 0);
 
   const porcentajeEntrada = (100 - porcentajeBanco) / 100;
 
@@ -631,7 +775,9 @@ function calcular() {
   const prestamo = baseCalculo * (porcentajeBanco / 100);
   const entrada = precio - prestamo;
 
-  const inmobiliaria = precio * 0.03 * 1.21;
+  const conInmobiliaria = document.querySelector('input[name="inmobiliaria"]:checked').value === 'con';
+  const pctInmo = conInmobiliaria ? (parseFloat(document.getElementById('pctInmobiliaria').value) || 3) : 0;
+  const inmobiliaria = conInmobiliaria ? precio * (pctInmo / 100) * 1.21 : 0;
 
   const impuestos = tipo === 'segunda'
     ? precio * cc.itp
@@ -644,7 +790,7 @@ function calcular() {
   const gestionFija = precio < 150000 ? 1000 : precio < 300000 ? 1300 : 1500;
 
   const totalNecesario = entrada + inmobiliaria + impuestos + gestionFija;
-  const ahorrosRestantes = ahorros - totalNecesario;
+  const ahorrosRestantes = ahorrosTotales - totalNecesario;
 
   const r = (tin / 100) / 12;
   const n = plazo * 12;
@@ -664,6 +810,14 @@ function calcular() {
   const alertasEl = document.getElementById('alertas');
   alertasEl.innerHTML = '';
 
+  if (hayActivo) {
+    if (tipoActivo === 'vivienda_habitual') {
+      alertasEl.innerHTML += `<div class="alert alert-ok"><strong>ℹ Vivienda habitual.</strong> Si reinviertes la ganancia en otra vivienda habitual puedes estar exento de IRPF por la venta. El dinero neto estimado que sumas a tus ahorros es ${fmt(netoActivo)}. Consulta con un asesor fiscal para confirmar la exención.</div>`;
+    } else {
+      alertasEl.innerHTML += `<div class="alert alert-warn"><strong>Venta de activo.</strong> Precio de venta: ${fmt(ventaActivo)} · Ganancia estimada: ${fmt(gananciaActivo)} · IRPF estimado: ${fmt(irpfActivo)} · Neto que sumas a tus ahorros: ${fmt(netoActivo)}. Cálculo orientativo — consulta con un asesor fiscal.</div>`;
+    }
+  }
+
   if (hayTasacion) {
     if (tasacionVal > precio) {
       alertasEl.innerHTML += `<div class="alert alert-ok"><strong>✓ Tasación por encima del precio de venta.</strong> El banco presta sobre los ${fmt(tasacionVal)} de tasación, así que tu entrada se reduce. Recuerda que algunos bancos limitan el préstamo al 80% del precio de venta aunque la tasación sea mayor — confirma este punto con tu entidad.</div>`;
@@ -680,8 +834,16 @@ function calcular() {
     alertasEl.innerHTML += `<div class="alert alert-ok"><strong>Ahorros suficientes.</strong> Cubrirías todos los gastos iniciales y te quedarían ${fmt(ahorrosRestantes)} de reserva.</div>`;
   }
 
-  const cuotaIngresos = cuota / (cuota * 3);
-  const cuotaWarning = cuota > 1500;
+  if (ingresos > 0) {
+    const pctEsfuerzo = (cuota / ingresos) * 100;
+    if (pctEsfuerzo > 35) {
+      alertasEl.innerHTML += `<div class="alert alert-danger"><strong>⚠ Esfuerzo financiero alto.</strong> La cuota representa el ${pctEsfuerzo.toFixed(1)}% de tus ingresos netos. Lo recomendable es no superar el 30–35%.</div>`;
+    } else if (pctEsfuerzo > 30) {
+      alertasEl.innerHTML += `<div class="alert alert-warn"><strong>Esfuerzo financiero ajustado.</strong> La cuota representa el ${pctEsfuerzo.toFixed(1)}% de tus ingresos netos. Estás en el límite recomendable del 30–35%.</div>`;
+    } else {
+      alertasEl.innerHTML += `<div class="alert alert-ok"><strong>✓ Esfuerzo financiero razonable.</strong> La cuota representa el ${pctEsfuerzo.toFixed(1)}% de tus ingresos netos, por debajo del 30% recomendado.</div>`;
+    }
+  }
 
   const cards = document.getElementById('result-cards');
   cards.innerHTML = `
@@ -713,12 +875,19 @@ function calcular() {
     ${diferenciaTasacion > 0 ? `<div class="breakdown-row warn"><span>Valor de tasación</span><span style="color:var(--warn)">${fmt(baseCalculo)}</span></div>` : ''}
     <div class="breakdown-row"><span>— Préstamo del banco (${porcentajeBanco}% sobre ${diferenciaTasacion > 0 ? 'tasación' : 'precio'})</span><span>− ${fmt(prestamo)}</span></div>
     <div class="breakdown-row"><span>= Entrada que pones tú</span><span>${fmt(entrada)}</span></div>
-    <div class="breakdown-row"><span>Honorarios inmobiliaria (3% + IVA)</span><span>${fmt(inmobiliaria)}</span></div>
+    ${conInmobiliaria ? `<div class="breakdown-row"><span>Honorarios inmobiliaria (${pctInmo}% + IVA)</span><span>${fmt(inmobiliaria)}</span></div>` : ''}
     <div class="breakdown-row"><span>${impLabel}</span><span>${fmt(impuestos)}</span></div>
     <div class="breakdown-row"><span>Notaría + registro + gestoría (estimado)</span><span>${fmt(gestionFija)}</span></div>
     <div class="breakdown-row total"><span>Total que necesitas tener hoy</span><span>${fmt(totalNecesario)}</span></div>
-    <div class="breakdown-row" style="margin-top:0.5rem;"><span>Tus ahorros</span><span>${fmt(ahorros)}</span></div>
-    <div class="breakdown-row ${ahorrosRestantes < 0 ? 'danger' : ''}" style="font-weight:500;"><span>Ahorros que te quedan tras la compra</span><span style="color:${ahorrosRestantes < 0 ? 'var(--danger)' : 'inherit'}">${fmt(ahorrosRestantes)}</span></div>
+    <div class="breakdown-row" style="margin-top:0.5rem;"><span>Tus ahorros propios</span><span>${fmt(ahorros)}</span></div>
+    ${hayActivo ? `
+    <div class="breakdown-row"><span>Venta de activo (bruto)</span><span>${fmt(ventaActivo)}</span></div>
+    ${irpfActivo > 0 ? `<div class="breakdown-row warn"><span>IRPF estimado sobre la venta</span><span style="color:var(--warn)">− ${fmt(irpfActivo)}</span></div>` : ''}
+    <div class="breakdown-row"><span>Neto de la venta</span><span>${fmt(netoActivo)}</span></div>
+    <div class="breakdown-row"><span>Total disponible (ahorros + venta)</span><span>${fmt(ahorrosTotales)}</span></div>
+    ` : ''}
+    <div class="breakdown-row ${ahorrosRestantes < 0 ? 'danger' : ''}" style="font-weight:500;"><span>Dinero que te queda tras la compra</span><span style="color:${ahorrosRestantes < 0 ? 'var(--danger)' : 'inherit'}">${fmt(ahorrosRestantes)}</span></div>
+    ${ingresos > 0 ? `<div class="breakdown-row"><span>% de ingresos destinado a cuota</span><span>${((cuota/ingresos)*100).toFixed(1)}%</span></div>` : ''}
     <hr class="divider" style="margin: 0.5rem 0;">
     <div class="breakdown-row"><span>Préstamo (capital)</span><span>${fmt(prestamo)}</span></div>
     <div class="breakdown-row"><span>TIN aplicado</span><span>${tin}%</span></div>
