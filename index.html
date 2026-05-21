@@ -746,7 +746,10 @@ function calcular() {
   const ahorros = parseFloat(document.getElementById('ahorros').value);
   const tin = parseFloat(document.getElementById('tin').value);
   const plazo = parseFloat(document.getElementById('plazo').value);
-  const ingresos = parseFloat(document.getElementById('ingresos').value) || 0;
+  const ingresos1 = parseFloat(document.getElementById('ingresos').value) || 0;
+  const ingresos2 = parseFloat(document.getElementById('ingresos2').value) || 0;
+  const dosTitulares = document.querySelector('input[name="titulares"]:checked').value === '2';
+  const ingresos = ingresos1 + (dosTitulares ? ingresos2 : 0);
   const tipo = document.querySelector('input[name="tipo"]:checked').value;
   const ccKey = document.getElementById('comunidad').value;
   const cc = CCAA[ccKey];
@@ -887,7 +890,7 @@ function calcular() {
     <div class="breakdown-row"><span>Total disponible (ahorros + venta)</span><span>${fmt(ahorrosTotales)}</span></div>
     ` : ''}
     <div class="breakdown-row ${ahorrosRestantes < 0 ? 'danger' : ''}" style="font-weight:500;"><span>Dinero que te queda tras la compra</span><span style="color:${ahorrosRestantes < 0 ? 'var(--danger)' : 'inherit'}">${fmt(ahorrosRestantes)}</span></div>
-    ${ingresos > 0 ? `<div class="breakdown-row"><span>% de ingresos destinado a cuota</span><span>${((cuota/ingresos)*100).toFixed(1)}%</span></div>` : ''}
+    ${ingresos > 0 ? `<div class="breakdown-row"><span>% de ingresos destinado a cuota ${dosTitulares ? '(suma de dos titulares)' : ''}</span><span>${((cuota/ingresos)*100).toFixed(1)}%</span></div>` : ''}
     <hr class="divider" style="margin: 0.5rem 0;">
     <div class="breakdown-row"><span>Préstamo (capital)</span><span>${fmt(prestamo)}</span></div>
     <div class="breakdown-row"><span>TIN aplicado</span><span>${tin}%</span></div>
