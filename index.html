@@ -5,15 +5,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>CalcuPro — Calculadora de Hipoteca</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Questrial&family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   :root {
-    --bg: #1e1630;
-    --surface: rgba(255,255,255,0.10);
+    --bg: #7b659a;
+    --surface: rgba(92,72,120,0.85);
     --border: rgba(255,148,168,0.25);
-    --text: #f0e6ff;
+    --text: #e9dcf7;
     --muted: #b89ec4;
     --accent: #FF94A8;
     --accent-light: rgba(255,148,168,0.12);
@@ -30,14 +30,12 @@
   }
 
   body {
-    background: var(--bg);
+    background: #7b659a;
     color: var(--text);
     font-family: 'DM Sans', sans-serif;
     font-weight: 400;
     min-height: 100vh;
     padding: 0;
-    background-image:
-      linear-gradient(180deg, #2e1550 0%, #1e1630 40%);
   }
 
   /* cuadrícula vaporwave en el fondo */
@@ -74,18 +72,25 @@
   }
 
   header h1 {
-    font-family: 'DM Serif Display', serif;
-    font-size: clamp(2.2rem, 6vw, 3.5rem);
-    color: var(--text);
-    letter-spacing: 0.04em;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(2.8rem, 7vw, 4.5rem);
+    letter-spacing: 0.1em;
     line-height: 1.1;
-    text-shadow: 0 0 30px rgba(255,148,168,0.5), 0 0 60px rgba(77,255,210,0.2);
+    font-weight: 400;
+  }
+
+  header h1 .calcu {
+    color: #ffffff;
   }
 
   header h1 em {
-    font-style: italic;
+    font-style: normal;
     color: var(--teal);
-    text-shadow: 0 0 20px rgba(77,255,210,0.8), 0 0 40px rgba(77,255,210,0.4);
+    text-shadow:
+      0 0 7px var(--teal),
+      0 0 20px var(--teal),
+      0 0 45px #00ffb3,
+      0 0 80px #00ffb3;
   }
 
   header p {
@@ -114,23 +119,22 @@
   }
 
   .card {
-    background: var(--surface);
-    border: 1px solid var(--border);
+    background: linear-gradient(135deg, #3d1a5e 0%, #2e1550 50%, #1a2d4d 100%);
+    border: 1px solid rgba(255,148,168,0.3);
     border-radius: var(--radius);
     padding: 1.5rem;
-    backdrop-filter: blur(8px);
-    box-shadow: 0 0 20px rgba(255,148,168,0.05), inset 0 1px 0 rgba(255,255,255,0.05);
+    box-shadow: 0 0 20px rgba(255,148,168,0.08), inset 0 1px 0 rgba(255,255,255,0.05);
   }
 
   .card-title {
-    font-family: 'DM Serif Display', serif;
-    font-size: 1.1rem;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.3rem;
     color: var(--teal);
     margin-bottom: 1.25rem;
     padding-bottom: 0.75rem;
     border-bottom: 1px solid var(--border);
     text-shadow: 0 0 12px rgba(77,255,210,0.4);
-    letter-spacing: 0.03em;
+    letter-spacing: 0.1em;
   }
 
   .field { margin-bottom: 1rem; }
@@ -172,7 +176,7 @@
 
   input[type="number"] {
     width: 100%;
-    background: rgba(255,255,255,0.08);
+    background: #51416a;
     border: 1px solid rgba(255,148,168,0.3);
     border-radius: var(--radius-sm);
     padding: 0.6rem 2.2rem 0.6rem 1.75rem;
@@ -220,7 +224,7 @@
     display: block;
     text-align: center;
     padding: 0.5rem 0.75rem;
-    background: rgba(255,255,255,0.08);
+    background: #51416a;
     border: 1px solid rgba(255,148,168,0.25);
     border-radius: var(--radius-sm);
     font-size: 0.78rem;
@@ -241,16 +245,18 @@
 
   select {
     width: 100%;
-    background: rgba(255,255,255,0.08);
+    background: #51416a;
     border: 1px solid rgba(255,148,168,0.3);
     border-radius: var(--radius-sm);
-    padding: 0.6rem 0.75rem;
+    padding: 0.6rem 2rem 0.6rem 0.75rem;
     font-family: 'DM Sans', sans-serif;
     font-size: 0.95rem;
     color: var(--text);
     outline: none;
     cursor: pointer;
     appearance: none;
+    -moz-appearance: none;
+    -webkit-appearance: none;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24'%3E%3Cpath fill='%234DFFD2' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
     background-position: right 0.75rem center;
@@ -281,9 +287,7 @@
     border: none;
     border-radius: var(--radius);
     padding: 1rem 1.5rem;
-    font-family: 'DM Serif Display', serif;
-    font-size: 1.15rem;
-    letter-spacing: 0.06em;
+    font-family: 'Questrial', sans-serif;
     cursor: pointer;
     margin-top: 1.25rem;
     transition: opacity 0.2s, transform 0.1s;
@@ -302,13 +306,13 @@
   .results-section.visible { display: block; }
 
   .results-header {
-    font-family: 'DM Serif Display', serif;
-    font-size: 1.4rem;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.6rem;
     color: var(--teal);
     margin-bottom: 1rem;
     padding-left: 0.25rem;
     text-shadow: 0 0 15px rgba(77,255,210,0.5);
-    letter-spacing: 0.03em;
+    letter-spacing: 0.1em;
   }
 
   .result-cards {
@@ -353,7 +357,7 @@
   }
 
   .result-value {
-    font-family: 'DM Serif Display', serif;
+    font-family: 'Questrial', sans-serif;
     font-size: 1.45rem;
     color: var(--text);
     line-height: 1;
@@ -396,7 +400,11 @@
     color: var(--teal);
   }
 
-  .alert strong { font-weight: 500; }
+  .alert-info {
+    background: rgba(212,191,241,0.1);
+    border: 1px solid rgba(212,191,241,0.35);
+    color: #d4bff1;
+  }
 
   .divider {
     border: none;
@@ -462,29 +470,6 @@
     margin-left: 0.4rem;
   }
 
-  select {
-    width: 100%;
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-    padding: 0.6rem 0.75rem;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 0.95rem;
-    color: var(--text);
-    outline: none;
-    cursor: pointer;
-    appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24'%3E%3Cpath fill='%236B6660' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 0.75rem center;
-    transition: border-color 0.15s;
-  }
-
-  select:focus {
-    border-color: var(--accent-mid);
-    box-shadow: 0 0 0 3px rgba(29, 122, 92, 0.12);
-  }
-
   .itp-tag {
     display: inline-block;
     background: var(--accent-light);
@@ -501,7 +486,7 @@
 <body>
 
 <header>
-  <h1>Calcu<em>Pro</em></h1>
+  <h1><span class="calcu">Calcu</span><em>Pro</em></h1>
   <p>¿Puedes comprarte ese piso? Descúbrelo antes de firmar nada.</p>
 </header>
 
@@ -523,7 +508,7 @@
       <div class="field">
         <label>Comunidad autónoma</label>
         <select id="comunidad" onchange="actualizarITP()">
-          <option value="madrid">Madrid</option>
+          <option value="" disabled selected style="color: rgba(240,230,255,0.3);">Selecciona comunidad</option>
           <option value="andalucia">Andalucía</option>
           <option value="aragon">Aragón</option>
           <option value="asturias">Asturias</option>
@@ -536,13 +521,14 @@
           <option value="extremadura">Extremadura</option>
           <option value="galicia">Galicia</option>
           <option value="la_rioja">La Rioja</option>
+          <option value="madrid">Madrid</option>
           <option value="murcia">Murcia</option>
           <option value="navarra">Navarra</option>
           <option value="pais_vasco">País Vasco</option>
           <option value="valencia">Valencia</option>
         </select>
-        <div class="hint" id="itp-hint">ITP segunda mano: <strong>6%</strong> — AJD obra nueva: <strong>0,75%</strong></div>
-        <div id="deduccion-hint" style="display:none; font-size:0.75rem; color:var(--accent); background:var(--accent-light); border:1px solid var(--accent-mid); border-radius:var(--radius-sm); padding:0.5rem 0.65rem; margin-top:0.4rem; line-height:1.5;"></div>
+        <div class="hint" id="itp-hint">Selecciona la comunidad donde está el piso para ver el ITP aplicable</div>
+        <div id="deduccion-hint" style="display:none; font-size:0.75rem; color:#d4bff1; background:rgba(212,191,241,0.1); border:1px solid rgba(212,191,241,0.35); border-radius:var(--radius-sm); padding:0.5rem 0.65rem; margin-top:0.4rem; line-height:1.5;"></div>
       </div>
 
       <div class="field">
@@ -709,8 +695,8 @@
 
   </div>
 
-  <div style="background: var(--accent-light); border: 1px solid var(--accent-mid); border-radius: var(--radius-sm); padding: 0.75rem 0.9rem; margin-top: 1rem;">
-    <p style="font-size: 0.78rem; color: var(--accent); line-height: 1.6;"><strong>⚠ Atención:</strong> La cuota mensual calculada refleja únicamente el coste del préstamo según el TIN. Tu pago real mensual será mayor, ya que los bancos suelen incluir productos asociados: seguro de hogar, seguro de vida, cuenta con comisión de mantenimiento, comisión de apertura... Pide siempre el TIN por separado y el precio desglosado de cada producto antes de firmar.</p>
+  <div style="background: rgba(212,191,241,0.1); border: 1px solid rgba(212,191,241,0.35); border-radius: var(--radius-sm); padding: 0.75rem 0.9rem; margin-top: 1rem;">
+    <p style="font-size: 0.78rem; color: #d4bff1; line-height: 1.6;"><strong>ℹ Atención:</strong> La cuota mensual calculada refleja únicamente el coste del préstamo según el TIN. Tu pago real mensual será mayor, ya que los bancos suelen incluir productos asociados: seguro de hogar, seguro de vida, cuenta con comisión de mantenimiento, comisión de apertura... Pide siempre el TIN por separado y el precio desglosado de cada producto antes de firmar.</p>
   </div>
 
   <button class="btn-calc" onclick="calcular()">Calcular mi hipoteca →</button>
@@ -839,6 +825,11 @@ function calcular() {
 
   if ([precio, porcentajeBanco, ahorros, tin, plazo].some(v => isNaN(v) || v < 0)) {
     alert('Por favor, rellena todos los campos con valores válidos.');
+    return;
+  }
+
+  if (!ccKey) {
+    alert('Por favor, selecciona la comunidad autónoma donde está el piso.');
     return;
   }
 
